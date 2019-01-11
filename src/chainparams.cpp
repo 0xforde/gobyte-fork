@@ -7,6 +7,7 @@
 
 #include "chainparams.h"
 #include "consensus/merkle.h"
+#include <arith_uint256.h>
 
 #include "tinyformat.h"
 #include "util.h"
@@ -53,6 +54,7 @@ static CBlock CreateGenesisBlock(const char* pszTimestamp, const CScript& genesi
 static CBlock CreateGenesisBlock(uint32_t nTime, uint32_t nNonce, uint32_t nBits, int32_t nVersion, const CAmount& genesisReward)
 {
     const char* pszTimestamp = "The Star Malaysia 17th November 2017 GoByte Genesis Reborn";
+    //const char* pszTimestamp = "fuck gobyte";
     const CScript genesisOutputScript = CScript() << ParseHex("043e5a5fbfbb2caa5f4b7c8fd24d890d6c244de254d579b5ba629f64c1b48275f59e0e1c834a60f6ffb4aaa022aaa4866434ca729a12465f80618fb2070045cb16") << OP_CHECKSIG;
     return CreateGenesisBlock(pszTimestamp, genesisOutputScript, nTime, nNonce, nBits, nVersion, genesisReward);
 }
@@ -92,7 +94,8 @@ public:
         consensus.nMajorityWindow = 1000;
         consensus.BIP34Height = 1;
         consensus.BIP34Hash = uint256S("0x00000c8a1ff01bae3f3875c81cb14115429af5744643b34b4ad1cbb7d2d59ca2");
-        consensus.powLimit = uint256S("00000fffff000000000000000000000000000000000000000000000000000000");
+        //consensus.powLimit = uint256S("00000fffff000000000000000000000000000000000000000000000000000000");
+        consensus.powLimit = uint256S("007fffff00000000000000000000000000000000000000000000000000000000");
         consensus.nPowTargetTimespan = 60 * 60; // GoByte: 1 hour, 24 blocks
         consensus.nPowTargetSpacing = 2.5 * 60; // GoByte: 150 seconds
         consensus.fPowAllowMinDifficultyBlocks = false;
@@ -117,7 +120,7 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_DIP0001].nThreshold = 3226; // 80% of 4032
 
         // The best chain should have at least this much work.
-        consensus.nMinimumChainWork = uint256S("0x00000000000000000000000000000000000000000000000004ce57668f63f9b4"); // 85000
+        consensus.nMinimumChainWork = uint256S("0x00"); // 85000
 
         // By default assume that the signatures in ancestors of this block are valid.
         consensus.defaultAssumeValid = uint256S("0x0000000000465ca188f7524071debf90b7fa9716736673a8641a82805119b2f0"); // 85000
@@ -130,28 +133,37 @@ public:
         pchMessageStart[0] = 0x1a;
         pchMessageStart[1] = 0xb2;
         pchMessageStart[2] = 0xc3;
-        pchMessageStart[3] = 0xd4;
+        //pchMessageStart[3] = 0xd4;
+        pchMessageStart[3] = 0xd5;
         vAlertPubKey = ParseHex("045f6f7880946beb809b89610a5c1fa3a25604e6a1fe0642576390f3c3be43f7d175cd3e62cbe90fac8868a3ba25ebcefb382f3ddaf0de20ca3a2697ed21b75110");
-        nDefaultPort = 12455;
+        //nDefaultPort = 12455;
+        nDefaultPort = 12456;
         nMaxTipAge = 6 * 60 * 60; // ~144 blocks behind -> 2 x fork detection time, was 24 * 60 * 60 in bitcoin
         nDelayGetHeadersTime = 24 * 60 * 60;
         nPruneAfterHeight = 100000;
 
-        genesis = CreateGenesisBlock(1510848000, 1631855, 0x1e0ffff0, 1, 50 * COIN);
-        consensus.hashGenesisBlock = genesis.GetHash();
-        assert(consensus.hashGenesisBlock == uint256S("0x0000033b01055cf8df90b01a14734cae92f7039b9b0e48887b4e33a469d7bc07"));
-        assert(genesis.hashMerkleRoot == uint256S("0xdc9a719dc1bcda39107ea55424f00cab512170a1cb69efa08531f483f2399f21"));
+        arith_uint256 bnTarget;
+        bool pfNegative = false;
+        bool overflow = false;
+        bnTarget.SetCompact(0x1fffffff, &pfNegative, &overflow);
+        std::cout << "Follow this command: " << bnTarget.ToString();
 
-        vSeeds.push_back(CDNSSeedData("seed1.gobyte.network", "seed1.gobyte.network"));
-        vSeeds.push_back(CDNSSeedData("seed2.gobyte.network", "seed2.gobyte.network"));
-        vSeeds.push_back(CDNSSeedData("seed3.gobyte.network", "seed3.gobyte.network"));
-        vSeeds.push_back(CDNSSeedData("seed4.gobyte.network", "seed4.gobyte.network"));
-        vSeeds.push_back(CDNSSeedData("seed5.gobyte.network", "seed5.gobyte.network"));
-        vSeeds.push_back(CDNSSeedData("seed6.gobyte.network", "seed6.gobyte.network"));
-        vSeeds.push_back(CDNSSeedData("seed7.gobyte.network", "seed7.gobyte.network"));
-        vSeeds.push_back(CDNSSeedData("seed8.gobyte.network", "seed8.gobyte.network"));
-        vSeeds.push_back(CDNSSeedData("seed9.gobyte.network", "seed9.gobyte.network"));
-        vSeeds.push_back(CDNSSeedData("seed10.gobyte.network", "seed10.gobyte.network"));
+
+        genesis = CreateGenesisBlock(1510848000, 374, 0x1fffffff, 1, 50 * COIN);
+        consensus.hashGenesisBlock = genesis.GetHash();
+        //assert(consensus.hashGenesisBlock == uint256S("0x1a904cc35db257f48f2945d5ce0cea1b9823ac4f598d3433d141622c38c3a7e6"));
+        //assert(genesis.hashMerkleRoot == uint256S("0xdc9a719dc1bcda39107ea55424f00cab512170a1cb69efa08531f483f2399f21"));
+
+        //vSeeds.push_back(CDNSSeedData("seed1.gobyte.network", "seed1.gobyte.network"));
+        //vSeeds.push_back(CDNSSeedData("seed2.gobyte.network", "seed2.gobyte.network"));
+        //vSeeds.push_back(CDNSSeedData("seed3.gobyte.network", "seed3.gobyte.network"));
+        //vSeeds.push_back(CDNSSeedData("seed4.gobyte.network", "seed4.gobyte.network"));
+        //vSeeds.push_back(CDNSSeedData("seed5.gobyte.network", "seed5.gobyte.network"));
+        //vSeeds.push_back(CDNSSeedData("seed6.gobyte.network", "seed6.gobyte.network"));
+        //vSeeds.push_back(CDNSSeedData("seed7.gobyte.network", "seed7.gobyte.network"));
+        //vSeeds.push_back(CDNSSeedData("seed8.gobyte.network", "seed8.gobyte.network"));
+        //vSeeds.push_back(CDNSSeedData("seed9.gobyte.network", "seed9.gobyte.network"));
+        //vSeeds.push_back(CDNSSeedData("seed10.gobyte.network", "seed10.gobyte.network"));
 
         // GoByte addresses start with 'G'
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,38);
@@ -181,34 +193,10 @@ public:
 
         checkpointData = (CCheckpointData) {
             boost::assign::map_list_of
-            (   500, uint256S("0x00000000009d382b57dda9a0e169d1f3f6f384eff5aecbf24329457bb1b30962"))
-            (  5500, uint256S("0x00000000002e3468a5196451755b5ff8d27cb7260a34250c98b0607eddfd91b2"))
-            ( 10500, uint256S("0x000000000018df60822b6fc7e13b2da59e5c7ee29e015bebb7cfaddc22001180"))
-            ( 15500, uint256S("0x00000000003c1ae6c074c7798f1b8111916bfa86a7f41ec51633d1fc1c925140"))
-            ( 20500, uint256S("0x0000000000702ff7699e8efd6af8b0ed888f77152078ed7bc782ece100e134aa"))
-            ( 25500, uint256S("0x00000000002e31e50a1753f1eff7b9d6e34b4a9def0aecd232a30b8cd5a602b4"))
-            ( 30500, uint256S("0x000000000043b2ab4bd00554e3265d00d89144ac38fe309b23030416f00bf977"))
-            ( 35500, uint256S("0x000000000005e20fc8021a844309e6d3e9835cd85245584a163379be39d8905f"))
-            ( 40500, uint256S("0x0000000000289c1d313b29dd50d86cbe6be0bf820c003a48244d0ec1e90e2849"))
-            ( 45500, uint256S("0x000000000000e3567b64c9628340e5cee8fc339b775c6164dd0333943faff781"))
-            ( 50500, uint256S("0x0000000000266c5869756c89df175674adafae97b26dddc5e77e9a93352cb5bc"))
-            ( 55500, uint256S("0x000000000005515ab76f79bde997aa9843efb378dd25dfad156a6ca7d5d15f69"))
-            ( 60500, uint256S("0x00000000003d534ac8baffd1ed8c9f2ea5481f22f8796643210d6dfeb70def28"))
-            ( 65500, uint256S("0x000000000026bbdcf9b3267bb030fc31a2b9c6eb6cd1f9b3694c0df8bf2c67a4"))
-            ( 70500, uint256S("0x0000000000108504d132a342a87e6c0afaf75737e60b43e7b446a4d7b5716de5"))
-            ( 75500, uint256S("0x000000000023159c0785a3eb1b1541d25347f649f149a3f53c32579364d6482a"))
-            ( 80500, uint256S("0x000000000001b919061af98801d30b9351226a555e1f265c9cd880b18e6ec405"))
-            ( 85500, uint256S("0x00000000003ead42a3ba43e9c0a536b6aef038aea4d6b3961df2af6edec26106"))
-            ( 90500, uint256S("0x000000000030eff4e52d37edee0dc14c13168fee49c743e32fcec206003844e0"))
-            ( 95500, uint256S("0x000000000078e57c0dc90b7dd4027ea54279c63c62bb6b7a38349ec783613056"))
-            ( 100500, uint256S("0x00000000004f79e57507c1b26b962f25f5102d43cfab93de118346b4a0426626"))
-            ( 105500, uint256S("0x000000000023363fc795f4cb55d87f2b17f5d0353a5a65402f51057543c764af"))
-            ( 110500, uint256S("0x000000000028fe8242eb23e939c7e6b2063d5a4cea533402e35a3c6557d02bc6"))
-            ( 115500, uint256S("0x000000000074763fd76ef4a344d4f7e049c1dc55395c3814ac608b6fde6c7ecb"))
-            ( 115890, uint256S("0x0000000000a8de066324ed2575d7e2b5ba21bc8eeaaa5dae2c37d6177953ac3c")),
+            (   0, uint256S("0x00468bc2b37d7ef98569c9b8e1268d402fd8e068918a90389805c3be5c2d4d28")),
 
-            1529183938, // * UNIX timestamp of last checkpoint block
-            245030,   // * total number of transactions between genesis and last checkpoint
+            1510848000, // * UNIX timestamp of last checkpoint block
+            1,   // * total number of transactions between genesis and last checkpoint
                         //   (the tx=... number in the SetBestChain debug.log lines)
             2800        // * estimated number of transactions per day after checkpoint
         };
@@ -275,9 +263,11 @@ public:
         pchMessageStart[0] = 0xd1;
         pchMessageStart[1] = 0x2b;
         pchMessageStart[2] = 0xb3;
-        pchMessageStart[3] = 0x7a;
+        //cphMessageStart[3] = 0x7a;
+        pchMessageStart[3] = 0x7b;
         vAlertPubKey = ParseHex("0458b688c478d2a3febf4e86db1b1c2f862cfb31780b6247c7caa35145e9cb16f55a60cc476654fedaa1dcd807c8432ee5a5f2324f727a0531713c66f7734b351c");
-        nDefaultPort = 13455;
+        //nDefaultPort = 13455;
+        nDefaultPort = 13456;
         nMaxTipAge = 0x7fffffff; // allow mining on top of old blocks for testnet
         nDelayGetHeadersTime = 24 * 60 * 60;
         nPruneAfterHeight = 1000;

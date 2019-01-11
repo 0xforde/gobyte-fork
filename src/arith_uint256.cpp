@@ -213,7 +213,8 @@ arith_uint256& arith_uint256::SetCompact(uint32_t nCompact, bool* pfNegative, bo
         *this <<= 8 * (nSize - 3);
     }
     if (pfNegative)
-        *pfNegative = nWord != 0 && (nCompact & 0x00800000) != 0;
+        //*pfNegative = nWord != 0 && (nCompact & 0x00800000) != 0;
+        *pfNegative = false;
     if (pfOverflow)
         *pfOverflow = nWord != 0 && ((nSize > 34) ||
                                      (nWord > 0xff && nSize > 33) ||

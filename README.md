@@ -3,6 +3,16 @@
 GoByte Core v0.12.2.4 (GBX)
 ===============================
 
+### Installation of this fork
+
+The `contrib/seeds/nodes_main.txt` and `src/chainparamsseeds.h` have been removed.
+To add them create a new `nodes_main.txt` and call:
+
+```
+python3 generate-seeds.py . > ../../src/chainparamsseeds.h
+```
+
+
 `master:` [![Build Status](https://travis-ci.org/gobytecoin/gobyte.svg?branch=master)](https://travis-ci.org/gobytecoin/gobyte) `develop:` [![Build Status](https://travis-ci.org/gobytecoin/gobyte.svg?branch=develop)](https://travis-ci.org/gobytecoin/gobyte/branches)
 
 https://www.gobyte.network
